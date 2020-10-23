@@ -58,6 +58,21 @@ font-size: 25px;
 }
 /*---------------Fin del Header---------------*/
 
+/*-------------- Inicio de la Sección de Catgorías-----------*/
+
+.section1_categorias {
+  display: flex;
+  align-items: center;
+  justify-self: start;
+  margin: 30px 0px 0px 30px;
+}
+/*-------------- Fin de la Sección de Catgorías-----------*/
+/*-------------- Inicio de la Sección de Sub-Catgorías-----------*/
+
+.section2_subcategorias {
+  margin: 50px;
+}
+/*-------------- Fin de la Sección de Sub-Catgorías-----------*/
 /*---------------Inicio del Footer---------------*/
 footer {
   text-align: center;

@@ -44,28 +44,28 @@
           var_dump($categoria);
         }
         
-        echo "<div class='section2_subcategorias'>";
-        echo "<br><br>";
-        print ("<TABLE>\n");
-        print ("<TR>\n");
-        print ("<TH>Sub-categoria</TH>\n");
-        print ("<TH>Título</TH>\n");
-        print ("<TH>Descripción</TH>\n");
-        print ("</TR>\n");
-        foreach ($categoria as $resp) {
-          print ("<TR>\n");
-          print ("<TD>" . $resp['nombre_subcategoria'] . "<TD>\n");
-          print ("<TD>" . $resp['titulo_anuncio'] . "<TD>\n");
-          print ("<TD>" . $resp['descripcion'] . "<TD>\n");
-          print ("</TR>\n");
-        }
-        print ("</TABLE>\n");
-        echo "</div>";
+        // echo "<div class='section2_subcategorias'>";
+        // echo "<br><br>";
+        // print ("<TABLE>\n");
+        // print ("<TR>\n");
+        // print ("<TH>Sub-categoria</TH>\n");
+        // print ("<TH>Título</TH>\n");
+        // print ("<TH>Descripción</TH>\n");
+        // print ("</TR>\n");
+        // foreach ($categoria as $resp) {
+        //   print ("<TR>\n");
+        //   print ("<TD>" . $resp['nombre_subcategoria'] . "<TD>\n");
+        //   print ("<TD>" . $resp['titulo_anuncio'] . "<TD>\n");
+        //   print ("<TD>" . $resp['descripcion'] . "<TD>\n");
+        //   print ("</TR>\n");
+        // }
+        // print ("</TABLE>\n");
+        // echo "</div>";
 
 
-        // echo "<h1>";
-        // print($categoria[0]["nombre_categoria"]);
-        // echo "</h1>";
+        echo "<h1>";
+        print($categoria[0]["nombre_categoria"]);
+        echo "</h1>";
 
         echo "<div class='section2_subcategorias'>";
         if($estado = 1) {
