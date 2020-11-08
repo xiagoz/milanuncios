@@ -7,7 +7,7 @@ class autenticacionDB {
 
   public function __construct()
   {
-    $this->db=new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    $this->db=new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_DRIVER);
     
     if($this->db->connect_errno){
       echo "Fallo al conectar a la base de datos <br>".$this->db->connect_errno;
