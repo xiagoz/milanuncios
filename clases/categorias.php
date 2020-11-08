@@ -3,10 +3,6 @@
 require_once('autenticacion.php');
 
 class categoria extends autenticacionDB {
-  protected $categoria;
-  protected $sub_categoria;
-  protected $titulo;
-  protected $descripcion;
 
   public function __construct()
   {
@@ -14,13 +10,43 @@ class categoria extends autenticacionDB {
   }
 
 
-  public function consultar_categorias($instruccion) {
+  public function consultar_categorias() {
+    $instruccion = "CALL listar_categorias()";
+
+    $consulta=$this->db->query($instruccion);
+    
+    if($consulta !== false) {
+      $resultado=$consulta->fetch_all(MYSQLI_ASSOC);
+      if($resultado) {
+        return $resultado;
+        $resultado->close();
+        $this->db->close();
+      }
+    }
+  }
+
+  public function consultar_categorias_paginas($desde, $tamano){
+  $instruccion = "CALL consultar_categorias_paginas('".$desde."','".$tamano."')";
+
+  $consulta=$this->db->query($instruccion);
+  
+  if($consulta !== false) {
+    $resultado=$consulta->fetch_all(MYSQLI_ASSOC);
+    if($resultado) {
+      return $resultado;
+      $resultado->close();
+      $this->db->close();
+    }
+  }
+}
+    public function consultar_sub_categorias() {
+    $instruccion = "CALL listar_sub_categorias()";
 
     $consulta=$this->db->query($instruccion);
     $resultado=$consulta->fetch_all(MYSQLI_ASSOC);
 
     if(!$resultado){
-      echo "Fallo al consultar la base de datos";
+      echo "\n";
     }
     else{
       return $resultado;
@@ -29,13 +55,13 @@ class categoria extends autenticacionDB {
     }
   }
 
-    public function consultar_sub_categorias($instruccion) {
+    public function consultar_sub_categorias2($instruccion) {
 
     $consulta=$this->db->query($instruccion);
     $resultado=$consulta->fetch_all(MYSQLI_ASSOC);
 
     if(!$resultado){
-      echo "Fallo al consultar la base de datos";
+      echo "\n";
     }
     else{
       return $resultado;
@@ -46,14 +72,12 @@ class categoria extends autenticacionDB {
 
 
     public function consultar_filtros($campo,$valor) {
-
-    $instruccion = "CALL listar_filtros('".$campo."',".$valor."')";
-
+    $instruccion = "SELECT * from sub_categorias where $campo LIKE '%$valor%'";
     $consulta=$this->db->query($instruccion);
+    $resultado=$consulta->fetch_all(MYSQLI_ASSOC);
     
-
-    if(!$resultado){
-      echo "Fallo al consultar la base de datos";
+    if(!$consulta){
+      echo "\n";
     }
     else{
       return $resultado;
@@ -61,5 +85,4 @@ class categoria extends autenticacionDB {
       $this->db->close();
     }
   }
-
 }

@@ -25,64 +25,139 @@
             <label>Con el valor</label>
             <input type="text" name="valor">
             <input name="ConsultarFiltro" value="Filtrar Datos" type="submit"/>
+            <input name="ConsultarTodos" value="Ver Todos" type="submit"/>
           </form>
         </select>
       </section>
     </nav>
   </header>
-    <section class="section1_categorias">
+
+    <section>
+      <?php
+      require_once("clases/categorias.php");
+      $categorias = new categoria();
+      $sub_categoria = $categorias->consultar_sub_categorias();
+
+      if(array_key_exists('ConsultarTodos', $_POST)) {
+      $filtros = new categoria();
+      $sub_categoria_new = $filtros->consultar_sub_categorias();
+      }
+
+      if(array_key_exists('ConsultarFiltro', $_POST)) {
+        $filtros = new categoria();
+        $sub_categoria = $filtros->consultar_filtros($_REQUEST['campos'], $_REQUEST['valor']);
+      }
+
+      $nfilas = count($sub_categoria);
+
+      if($nfilas > 0) {
+      echo "<div class='section_filtro'>";
+      echo "<br><br>";
+      print ("<table>\n");
+      print ("<tr>\n");
+      print ("<th>Sub-categoria</th>\n");
+      print ("<th>Título</th>\n");
+      print ("<th>Descripción</th>\n");
+      print ("</tr>\n");
+
+      foreach ($sub_categoria as $resp) {
+        print ("<tr>\n");
+        print ("<td>" . $resp['nombre_subcategoria'] . "</td>\n");
+        print ("<td>" . $resp['titulo_anuncio'] . "</td>\n");
+        print ("<td>" . $resp['descripcion'] . "</td>\n");
+        print ("</tr>\n");
+      }
+      print ("</table>\n");
+      echo "</div>";
+      echo "<hr>";
+    }
+    ?>
+    </section>
+
+    <section class="section1_categorias"><!--class="section1_categorias"-->
     <?php
-        require_once("clases/categorias.php");
-        $estado = 1;
-        $sql = "select nombre_categoria from categorias where id = 1";
-        $categorias = new categoria();
-        $categoria = $categorias->consultar_categorias($sql);
+      require_once("clases/categorias.php");
+      $categorias = new categoria();
+      $categoria = $categorias->consultar_categorias();
 
-        if(array_key_exists('ConsultarFiltro', $_POST)) {
-          $filtros = new categoria();
-          $categoria = $filtros->consultar_filtros($_REQUEST["campos"], $_REQUEST["valor"]);
-          var_dump($categoria);
-        }
-        
-        // echo "<div class='section2_subcategorias'>";
-        // echo "<br><br>";
-        // print ("<TABLE>\n");
-        // print ("<TR>\n");
-        // print ("<TH>Sub-categoria</TH>\n");
-        // print ("<TH>Título</TH>\n");
-        // print ("<TH>Descripción</TH>\n");
-        // print ("</TR>\n");
-        // foreach ($categoria as $resp) {
-        //   print ("<TR>\n");
-        //   print ("<TD>" . $resp['nombre_subcategoria'] . "<TD>\n");
-        //   print ("<TD>" . $resp['titulo_anuncio'] . "<TD>\n");
-        //   print ("<TD>" . $resp['descripcion'] . "<TD>\n");
-        //   print ("</TR>\n");
-        // }
-        // print ("</TABLE>\n");
-        // echo "</div>";
+      $tamano_paginas = 1;
 
+      $pagina = 1;
+      $paginasig = 1;
+      if(isset($_GET['pagina'])) {
+      $pagina = $_GET['pagina'];
+      $paginasig = $_GET['pagina'];
+      }
 
-        echo "<h1>";
-        print($categoria[0]["nombre_categoria"]);
-        echo "</h1>";
+      $nfilas = count($categoria);
+      $total_paginas = ceil($nfilas/$tamano_paginas);
+      $desde = ($pagina-1) * $tamano_paginas;
+      $hasta = $desde + $tamano_paginas;
 
-        echo "<div class='section2_subcategorias'>";
-        if($estado = 1) {
-          $sql2 = "select nombre_subcategoria from sub_categorias where id_categorias = 1";
-          $subcategorias = new categoria();
-          $subcategoria = $subcategorias->consultar_sub_categorias($sql2);
+      if ($hasta > $nfilas){
+      $hasta = $nfilas;
+      }
+
+      
+      $obj_categoria = new categoria();
+      $categoria2 = $obj_categoria->consultar_categorias_paginas($desde, $tamano_paginas);
+      
+      echo "<h1>";
+      print($categoria2[0]["nombre_categoria"].":");
+      echo "</h1>";
+
+      echo "<div class='section2_subcategorias'>";
+      if($categoria2) {
+        $id = $categoria2[0]["id"];
+        $sql2 = "select nombre_subcategoria from sub_categorias where id_categorias = $id";
+        $subcategorias = new categoria();
+        $subcategoria = $subcategorias->consultar_sub_categorias2($sql2);
+        if($subcategoria == NULL) {
+          echo "<br><b>Esta categoría aún no tiene subcategorías</b>";
+        } else {
           $filas = count($subcategoria);
-          echo "<br><br>";
+
+          echo "<br>";
           foreach ($subcategoria as $resultado) {
             echo "<ul>";
-              echo "<li>" . $resultado["nombre_subcategoria"] . "</li><br>";
+              echo "<li><a href='#' style=color:#379FD0>" . $resultado["nombre_subcategoria"] . "</a></li><br>";
             echo "</ul>";
           }
-        echo "</div>";
         }
+      echo "</div>";
+      }
+    ?>
+    </section>
+
+    <section class="section_paginacion">
+      <?php
+      echo"<label class='paginacion'>Número de anuncios encontrados: ".$nfilas."</label><br/>";
+      echo"<label class='paginacion'>Mostrando número de página: <b>".$pagina. "</b> de ". $total_paginas."</label> [";
+
+      if ($pagina > 1) {
+        $pagina--;
+        echo"<a href='?pagina=". $pagina . "'>Anterior</a> |";
+      }elseif ($pagina = 1) {
+        echo"<label>Anterior</label> |";
+      }
+
+      for ($i=1; $i<=$total_paginas; $i++){
+        echo "<a href='?pagina=". $i . "'>" . $i . "</a>  ";
+      }
+
+      echo " |";
+      
+      if($paginasig < $total_paginas) {
+        $siguiente = $paginasig + 1;
+        echo"<a href='?pagina=". $siguiente . "'>Siguiente</a> ]";
+      } elseif ($paginasig == $total_paginas) {
+        echo"<label>Siguiente</label>]";
+      }
+
+      echo"<br><br>";
       ?>
     </section>
+
   <footer>
     <div class="index_footer_div">
       <div class="index_header_nav_div1">
